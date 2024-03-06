@@ -25,17 +25,7 @@ connection.connect(function(err) {
 let campgrounds = [
     {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
     {name: 'Granite Hill', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Granite Hill', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Granite Hill', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Granite Hill', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-
+    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'}
 ];
 
 app.get('/', function(req, res){
@@ -58,7 +48,7 @@ app.post('/campgrounds', function(req, res){
 })
 
 app.get('/campgrounds/new', function(req, res){
-    res.render('new.ejs');
+    res.render('new');
 })
 
 app.listen(3000, function(){
