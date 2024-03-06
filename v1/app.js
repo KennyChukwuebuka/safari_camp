@@ -1,10 +1,26 @@
-let express = require('express');
-let app = express();
-let bodyParser = require('body-parser');
+let mysql       = require('mysql'),
+    express     = require('express'),
+    app         = express(),
+    bodyParser  = require('body-parser')
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
+
+let connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'shaRON_pass1234',
+    database: 'safaricamp'
+});
+
+connection.connect(function(err) {
+    if(err) {
+        console.log(err);
+    } else {
+        console.log('Connected to the database');
+    }
+})
 
 let campgrounds = [
     {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
