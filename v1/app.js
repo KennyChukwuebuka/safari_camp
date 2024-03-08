@@ -14,43 +14,70 @@ let connection = mysql.createConnection({
     database: 'safaricamp'
 });
 
-connection.connect(function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log('Connected to the database');
-    }
-})
+// Ensure campgrounds table is created before handling requests
+createCampgroundsTable();
 
-let campgrounds = [
-    {name: 'Salmon Creek', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Granite Hill', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'},
-    {name: 'Mountain Goat', image: 'https://www.elacampground.com/wp-content/uploads/2019/06/Ela-Campground-87.jpg'}
-];
+// Function to create campgrounds table
+function createCampgroundsTable() {
+    let createTableQuery = `
+        CREATE TABLE IF NOT EXISTS campgrounds (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            image VARCHAR(255) NOT NULL
+        )
+    `;
 
-app.get('/', function(req, res){
-    res.render('landing');
+    connection.query(createTableQuery, function(err, result) {
+        if(err) {
+            console.log('Error creating campgrounds table:', err);
+        } else {
+            console.log('Campgrounds table created successfully');
+            // Start the server after table creation
+            startServer();
+        }
+    });
+}
+
+// Function to start the server
+function startServer() {
+    app.listen(3000, function(){
+        console.log('App listening on port 3000');
+    });
+}
+
+// create the landing page 
+app.get("/", function(req, res) {
+    res.render("landing");
 });
 
-app.get('/campgrounds', function(req, res){
+// Route to display all campgrounds
+app.get('/campgrounds', function(req, res) {
+    connection.query('SELECT * FROM campgrounds', function(err, results) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error fetching campgrounds from database');
+        } else {
+            res.render('campgrounds', { campgrounds: results });
+        }
+    });
+});
 
-   res.render('campgrounds', {campgrounds: campgrounds});
-})
+// Route to display the form to create a new campground
+app.get('/campgrounds/new', function(req, res){
+    res.render('new');
+});
 
+// Route to add a new campground
 app.post('/campgrounds', function(req, res){
-    // get data from form and add to campgrounds array
     let name = req.body.name;
     let image = req.body.image;
     let newCampground = {name: name, image: image};
-    campgrounds.push(newCampground);
-    // redirect back to campgrounds page
-    res.redirect('/campgrounds');
-})
-
-app.get('/campgrounds/new', function(req, res){
-    res.render('new');
-})
-
-app.listen(3000, function(){
-    console.log('App listening on port 3000');
+    connection.query('INSERT INTO campgrounds SET ?', newCampground, function(err, result) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error adding new campground');
+        } else {
+            res.redirect('/campgrounds');
+        }
+    });
 });

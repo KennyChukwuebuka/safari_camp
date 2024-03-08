@@ -1,9 +1,36 @@
-<%- include('partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file here -->
+</head>
+<body>
 
-<h1>Landing Page!</h1>
+<header>
+    <h1>Welcome to Our Site</h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+</header>
 
-<p>This is the landing page</p>
+<main>
+    <section class="landing">
+        <h2>Landing Page</h2>
+        <p>Welcome to our landing page!</p>
+        <p>Explore our amazing campgrounds.</p>
+        <a href="/campgrounds" class="btn">View Campgrounds</a>
+    </section>
+</main>
 
-<a href="/campgrounds">View Campgrounds</a>
+<footer>
+    <p>&copy; 2024 Your Company. All rights reserved.</p>
+</footer>
 
-<%- include('partials/footer') %>
+</body>
+</html>
