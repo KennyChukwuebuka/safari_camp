@@ -1,13 +1,27 @@
-let mysql       = require('mysql'),
-    express     = require('express'),
-    app         = express(),
-    bodyParser  = require('body-parser')
+const mysql = require('mysql');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const multer = require('multer');
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
 
 app.set('view engine', 'ejs');
 
-let connection = mysql.createConnection({
+// Database connection setup
+const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'shaRON_pass1234',
@@ -19,7 +33,7 @@ createCampgroundsTable();
 
 // Function to create campgrounds table
 function createCampgroundsTable() {
-    let createTableQuery = `
+    const createTableQuery = `
         CREATE TABLE IF NOT EXISTS campgrounds (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
@@ -27,32 +41,32 @@ function createCampgroundsTable() {
         )
     `;
 
-    connection.query(createTableQuery, function(err, result) {
-        if(err) {
+    connection.query(createTableQuery, function (err, result) {
+        if (err) {
             console.log('Error creating campgrounds table:', err);
         } else {
             console.log('Campgrounds table created successfully');
             // Start the server after table creation
-            startServer();
+            // startServer();
         }
     });
 }
 
 // Function to start the server
 function startServer() {
-    app.listen(3000, function(){
-        console.log('App listening on port 3000');
+    app.listen(5000, function () {
+        console.log('App listening on port 5000');
     });
 }
 
-// create the landing page 
-app.get("/", function(req, res) {
+// Routes
+
+app.get("/", function (req, res) {
     res.render("landing");
 });
 
-// Route to display all campgrounds
-app.get('/campgrounds', function(req, res) {
-    connection.query('SELECT * FROM campgrounds', function(err, results) {
+app.get('/campgrounds', function (req, res) {
+    connection.query('SELECT * FROM campgrounds', function (err, results) {
         if (err) {
             console.log(err);
             res.status(500).send('Error fetching campgrounds from database');
@@ -62,22 +76,42 @@ app.get('/campgrounds', function(req, res) {
     });
 });
 
-// Route to display the form to create a new campground
-app.get('/campgrounds/new', function(req, res){
+// a route to return an image
+app.get('/uploads/:filename', function (req, res) {
+    res.sendFile(__dirname + '/uploads/' + req.params.filename);
+});
+
+app.get('/campgrounds/new', function (req, res) {
     res.render('new');
 });
 
 // Route to add a new campground
-app.post('/campgrounds', function(req, res){
+app.post('/campgrounds', upload.single('image'), function (req, res) {
     let name = req.body.name;
-    let image = req.body.image;
-    let newCampground = {name: name, image: image};
-    connection.query('INSERT INTO campgrounds SET ?', newCampground, function(err, result) {
+    let image = req.file ? req.file.filename : '';
+    image_url = 'http://localhost:5000/uploads/' + image;
+    let newCampground = { name: name, image: image_url };
+
+    console.log(newCampground);
+    
+    // Check if 'name' is provided (mandatory field)
+    if (!name) {
+        return res.status(400).send('Name is required.');
+    }
+    
+    connection.query('INSERT INTO campgrounds SET ?', newCampground, function (err, result) {
         if (err) {
             console.log(err);
-            res.status(500).send('Error adding new campground');
+            return res.status(500).send('Error adding new campground');
         } else {
             res.redirect('/campgrounds');
         }
     });
 });
+
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Start server
+startServer();
