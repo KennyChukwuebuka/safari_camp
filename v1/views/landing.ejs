@@ -4,33 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Add your CSS file here -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>
-    <h1>Welcome to Our Site</h1>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-    </nav>
+<header class="bg-dark text-white py-4">
+    <div class="container">
+        <h1>Welcome to Our Site</h1>
+        <nav>
+            <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
 </header>
 
-<main>
-    <section class="landing">
-        <h2>Landing Page</h2>
-        <p>Welcome to our landing page!</p>
-        <p>Explore our amazing campgrounds.</p>
-        <a href="/campgrounds" class="btn">View Campgrounds</a>
+<main class="container my-5">
+    <section class="landing text-center">
+        <h2 class="mb-4">Explore the Great Outdoors</h2>
+        <p class="lead">Find the perfect camping spot and start your adventure today.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <img src="https://chehaw.org/images/chehaw-camping.png" alt="Campground Image" class="img-fluid mb-4">
+            </div>
+        </div>
+        <a href="/campgrounds" class="btn btn-primary btn-lg">View Campgrounds</a>
+    </section>
+
+    <hr>
+
+    <section class="features text-center my-5">
+        <h2 class="mb-4">Why Choose Us?</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <i class="fas fa-map-marker-alt fa-4x mb-3"></i>
+                <h3>Beautiful Locations</h3>
+                <p>Discover stunning campsites in scenic locations across the country.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-fire fa-4x mb-3"></i>
+                <h3>Outdoor Activities</h3>
+                <p>Enjoy a variety of outdoor activities including hiking, fishing, and more.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-coffee fa-4x mb-3"></i>
+                <h3>Amenities</h3>
+                <p>Modern amenities such as restrooms, showers, and picnic areas are available.</p>
+            </div>
+        </div>
     </section>
 </main>
 
-<footer>
-    <p>&copy; 2024 Your Company. All rights reserved.</p>
+<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <p class="text-center">&copy; 2024 Your Company. All rights reserved.</p>
+    </div>
 </footer>
 
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>

@@ -1,10 +1,14 @@
 const mysql = require('mysql');
 const express = require('express');
+const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -61,17 +65,19 @@ function startServer() {
 
 // Routes
 
-app.get("/", function (req, res) {
-    res.render("landing");
+// Landing page
+app.get('/', function (req, res) {
+    res.render('landing');
 });
 
+//INDEX - This is our INDEX route
 app.get('/campgrounds', function (req, res) {
     connection.query('SELECT * FROM campgrounds', function (err, results) {
         if (err) {
             console.log(err);
             res.status(500).send('Error fetching campgrounds from database');
         } else {
-            res.render('campgrounds', { campgrounds: results });
+            res.render('index', { campgrounds: results });
         }
     });
 });
@@ -81,11 +87,12 @@ app.get('/uploads/:filename', function (req, res) {
     res.sendFile(__dirname + '/uploads/' + req.params.filename);
 });
 
+//NEW - show form to create a new campground
 app.get('/campgrounds/new', function (req, res) {
     res.render('new');
 });
 
-// Route to add a new campground
+// CREATE - Route to add a new campground
 app.post('/campgrounds', upload.single('image'), function (req, res) {
     let name = req.body.name;
     let image = req.file ? req.file.filename : '';
@@ -109,9 +116,25 @@ app.post('/campgrounds', upload.single('image'), function (req, res) {
     });
 });
 
+// SHOW - This is our SHOW route
+app.get('/campgrounds/:id', function (req, res) {
+    const campgroundId = req.params.id;
+    const sql = 'SELECT * FROM campgrounds WHERE id = ?';
+    connection.query(sql, campgroundId, function (err, results) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error fetching campground from database');
+        } else {
+            if (results.length === 0) {
+                res.status(404).send('Campground not found');
+            } else {
+                const campground = results[0];
+                res.render('show', { campground: campground });
+            }
+        }
+    });
+});
 
-// Serve static files from the 'public' directory
-app.use(express.static('public'));
 
 // Start server
 startServer();
