@@ -1,13 +1,17 @@
-const mysql = require('mysql');
-const express = require('express');
-const path = require('path');
-const app = express();
-const bodyParser = require('body-parser');
-const multer = require('multer');
+const mysql         = require('mysql');
+const express       = require('express');
+const path          = require('path');
+const app           = express();
+const bodyParser    = require('body-parser');
+const multer        = require('multer');
+//const comment       = require('./models/comment'); 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+//CSS setup
+app.use(express.static(__dirname + '/public'));
 
 
 // Multer setup for file uploads
@@ -37,7 +41,7 @@ createCampgroundsTable();
 
 // Function to create campgrounds table
 function createCampgroundsTable() {
-    const createTableQuery = `
+    const createCampgroundsQuery = `
         CREATE TABLE IF NOT EXISTS campgrounds (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
@@ -45,13 +49,30 @@ function createCampgroundsTable() {
         )
     `;
 
-    connection.query(createTableQuery, function (err, result) {
+    const createCommentsTableQuery = `
+        CREATE TABLE IF NOT EXISTS comments (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            comment TEXT NOT NULL,
+            author VARCHAR(255) NOT NULL, -- Add the author column
+            campground_id INT,
+            FOREIGN KEY (campground_id) REFERENCES campgrounds(id)
+        )
+    `;
+
+    connection.query(createCampgroundsQuery, function (err, result) {
         if (err) {
             console.log('Error creating campgrounds table:', err);
         } else {
             console.log('Campgrounds table created successfully');
-            // Start the server after table creation
-            // startServer();
+            // After creating campgrounds table, create comments table
+            connection.query(createCommentsTableQuery, function (err, result) {
+                if (err) {
+                    console.log('Error creating comments table:', err);
+                } else {
+                    console.log('Comments table created successfully');
+                    //startServer(); // Start the server after table creation
+                }
+            });
         }
     });
 }
@@ -135,6 +156,46 @@ app.get('/campgrounds/:id', function (req, res) {
     });
 });
 
+// =======================================================
+//COMMENT ROUTES
+
+// NEW - Show form to create a new comment
+app.get('/campgrounds/:id/comments/new', function (req, res) {
+    const campgroundId = req.params.id;
+    const sql = 'SELECT * FROM campgrounds WHERE id = ?';
+    connection.query(sql, [campgroundId], function (err, results) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error fetching campground from database');
+        } else {
+            if (results.length === 0) {
+                res.status(404).send('Campground not found');
+            } else {
+                const campground = results[0];
+                res.render('comments/new', { campground: campground });
+            }
+        }
+    });
+});
+
+// CREATE - Add new comment to database
+app.post('/campgrounds/:id/comments', function (req, res) {
+    const commentText = req.body.text; // Access text input directly
+    const commentAuthor = req.body.author; // Access author input directly
+    const campgroundId = req.params.id;
+    const sql = 'INSERT INTO comments (comment, author, campground_id) VALUES (?, ?, ?)';
+    connection.query(sql, [commentText, commentAuthor, campgroundId], function (err, result) {
+        if (err) {
+            console.log(err);
+            res.status(500).send('Error adding comment to database');
+        } else {
+            res.redirect('/campgrounds/' + campgroundId);
+        }
+    });
+});
+
+
+//=========================================================
 
 // Start server
 startServer();
