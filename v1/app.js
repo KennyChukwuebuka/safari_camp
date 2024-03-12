@@ -117,7 +117,6 @@ app.get('/campgrounds/new', function (req, res) {
 app.post('/campgrounds', upload.single('image'), function (req, res) {
     let name = req.body.name;
     let image = req.file ? req.file.filename : '';
-    console.log(req);
     image_url = 'http://localhost:5000/uploads/' + image;
     let newCampground = { name: name, image: image_url };
 
