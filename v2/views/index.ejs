@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="container">
+
+    <header class="jumbotron">
+        <div class="container text-center">
+            <h1>Welcome to Safari Campground</h1>
+            <p class="lead">View safari campgrounds from Africa</p>
+            <a class="btn btn-primary btn-lg" href="/campgrounds/new">Add a New Safari Campground</a>
+        </div>
+    </header>
+
+    <div class="row">
+        <% campgrounds.forEach(function(campground) { %>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <img class="card-img-top" src="<%= campground.image %>" alt="<%= campground.name %>">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= campground.name %></h4>
+                        <!-- Additional information about the campground can be added here -->
+                    </div>
+                    <div class="card-footer">
+                        <a href="/campgrounds/<%= campground.id %>" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

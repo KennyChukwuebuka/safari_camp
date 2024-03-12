@@ -1,0 +1,24 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <div class="row">
+        <h1 style="text-align: center;">Create a new safari campground</h1>
+        <div style="width: 30%; margin: 0 auto;" class="30%">
+            <form action="/campgrounds" method="POST" enctype="multipart/form-data">
+            <div class="form-group" style="margin-bottom: 10px;">
+                <input class="form-control" type="text" name="name" placeholder="Name">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <input class="form-control" type="file" name="image" accept="image/*">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block" style="width: 200px;">Submit!</button>
+            </div>
+            </form>
+            <a href="/campgrounds">Go back</a>
+        </div>
+    </div>
+</div>
+
+
+<%- include('partials/footer') %>
