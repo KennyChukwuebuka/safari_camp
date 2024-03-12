@@ -24,6 +24,18 @@
                         <a class="btn btn-primary" href="/campgrounds/<%= campground.id %>/comments/new">Comment</a>
                     </div>
                 </div>
+                <!-- Add comments section here -->
+                <div class="card-footer">
+                    <h4 class="card-title">Comments</h4>
+                    <ul class="list-group">
+                        <% comments.forEach(function(comment) { %>
+                            <li class="list-group-item">
+                                <p><strong>Author:</strong> <%= comment.author %></p>
+                                <p><strong>Comment:</strong> <%= comment.comment %></p>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

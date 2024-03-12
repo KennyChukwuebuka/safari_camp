@@ -50,10 +50,10 @@ function createCampgroundsTable() {
     `;
 
     const createCommentsTableQuery = `
-        CREATE TABLE IF NOT EXISTS comments (
+        CREATE TABLE IF NOT EXISTS comments_table (
             id INT AUTO_INCREMENT PRIMARY KEY,
             comment TEXT NOT NULL,
-            author VARCHAR(255) NOT NULL, -- Add the author column
+            author TEXT NOT NULL,
             campground_id INT,
             FOREIGN KEY (campground_id) REFERENCES campgrounds(id)
         )
@@ -117,6 +117,7 @@ app.get('/campgrounds/new', function (req, res) {
 app.post('/campgrounds', upload.single('image'), function (req, res) {
     let name = req.body.name;
     let image = req.file ? req.file.filename : '';
+    console.log(req);
     image_url = 'http://localhost:5000/uploads/' + image;
     let newCampground = { name: name, image: image_url };
 
@@ -150,7 +151,15 @@ app.get('/campgrounds/:id', function (req, res) {
                 res.status(404).send('Campground not found');
             } else {
                 const campground = results[0];
-                res.render('show', { campground: campground });
+                const comment_sql = 'SELECT * FROM comments_table WHERE campground_id = ?';
+                connection.query(comment_sql, [campgroundId], function (err, comments) {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send('Error fetching comments from database');
+                    } else {
+                        res.render('show', { campground: campground, comments: comments });
+                    }
+                });
             }
         }
     });
@@ -179,17 +188,20 @@ app.get('/campgrounds/:id/comments/new', function (req, res) {
 });
 
 // CREATE - Add new comment to database
-app.post('/campgrounds/:id/comments', function (req, res) {
-    const commentText = req.body.text; // Access text input directly
-    const commentAuthor = req.body.author; // Access author input directly
-    const campgroundId = req.params.id;
-    const sql = 'INSERT INTO comments (comment, author, campground_id) VALUES (?, ?, ?)';
-    connection.query(sql, [commentText, commentAuthor, campgroundId], function (err, result) {
+app.post('/campgrounds/:id/comments', upload.single('image'), function (req, res) {
+    const comment = req.body.comment
+    const author = req.body.author
+    const campground_id = req.params.id
+
+    console.log(comment, author, campground_id);
+
+    const sql = 'INSERT INTO comments_table (comment, author, campground_id) VALUES (?, ?, ?)';
+    connection.query(sql, [comment, author, campground_id], function (err, result) {
         if (err) {
             console.log(err);
             res.status(500).send('Error adding comment to database');
         } else {
-            res.redirect('/campgrounds/' + campgroundId);
+            res.redirect('/campgrounds/' + campground_id);
         }
     });
 });
