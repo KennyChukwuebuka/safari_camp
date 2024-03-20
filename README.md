@@ -37,6 +37,7 @@ git clone https://github.com/your-username/safari-campground-app.git
 npm install
 
 # Contributors
-
+- Anyaeji Chukwuebuka Kennedy
 
 # Acknowledgements
+- ALX SE Foundation
